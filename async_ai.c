@@ -10,7 +10,7 @@ static bool move_requested = false;
 static bool move_ready = false;
 
 static inline void fence() {
-#ifdef BOARD
+#ifdef ZYBO_BOARD
   __asm("dmb");
 #else
   __asm("mfence");
