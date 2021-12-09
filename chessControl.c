@@ -234,7 +234,7 @@ void chessControl_init() {
 // Ticks the SM
 void chessControl_tick() {
   // Debug printing
-  debugStatePrint();
+  // debugStatePrint();
 
   // Reset
   if (buttons_read() & BTN_RESET)
