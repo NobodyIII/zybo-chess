@@ -287,7 +287,7 @@ void displayRook(uint8_t row, uint8_t col, int16_t color, bool erase) {
   display_fillRect(x_coord, y_coord, ROOK_DIM, ROOK_DIM, display_color);
 }
 
-void displayKnight(uint8_t row, uint8_t col, int16_t color, bool erase) {
+void displayBishop(uint8_t row, uint8_t col, int16_t color, bool erase) {
   int16_t display_color, bg_color;
   int16_t x_coord1, x_coord2, x_coord3, center_x;
   int16_t y_coord1, y_coord2, y_coord3, center_y;
@@ -348,10 +348,10 @@ void displayKnight(uint8_t row, uint8_t col, int16_t color, bool erase) {
                        y_coord3, display_color);
 }
 
-void displayBishop(uint8_t row, uint8_t col, int16_t color, bool erase) {
+void displayKnight(uint8_t row, uint8_t col, int16_t color, bool erase) {
   int16_t display_color, bg_color;
-  int16_t x_coord;
-  int16_t y_coord;
+  int16_t center_x, x_coord_rect, x_coord_t1, x_coord_t2, x_coord_t3;
+  int16_t center_y, y_coord_rect, y_coord_t1, y_coord_t2, y_coord_t3;
 
   bg_color = readBGColor(row, col);
   // if erase is true redraw the piece in black, otherwise use white
@@ -360,46 +360,56 @@ void displayBishop(uint8_t row, uint8_t col, int16_t color, bool erase) {
   } else {
     display_color = color;
   }
-  // determine top left y coord based on row
+  // determine y coords of square's center depending on row
   if (row == FIRST_ROW) {
-    y_coord = ROW_0 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_0 - HALF_SQUARE_DIM;
   } else if (row == SECOND_ROW) {
-    y_coord = ROW_1 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_1 - HALF_SQUARE_DIM;
   } else if (row == THIRD_ROW) {
-    y_coord = ROW_2 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_2 - HALF_SQUARE_DIM;
   } else if (row == FOURTH_ROW) {
-    y_coord = ROW_3 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_3 - HALF_SQUARE_DIM;
   } else if (row == FIFTH_ROW) {
-    y_coord = ROW_4 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_4 - HALF_SQUARE_DIM;
   } else if (row == SIXTH_ROW) {
-    y_coord = ROW_5 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_5 - HALF_SQUARE_DIM;
   } else if (row == SEVENTH_ROW) {
-    y_coord = ROW_6 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_6 - HALF_SQUARE_DIM;
   } else if (row == EIGHTH_ROW) {
-    y_coord = ROW_7 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_Y;
+    center_y = ROW_7 - HALF_SQUARE_DIM;
   }
-  // determine top left x coord based on col
+  // determine x coords of square's center depending on col
   if (col == FIRST_COL) {
-    x_coord = COL_0 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = HALF_SQUARE_DIM;
   } else if (col == SECOND_COL) {
-    x_coord = COL_1 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_1 - HALF_SQUARE_DIM;
   } else if (col == THIRD_COL) {
-    x_coord = COL_2 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_2 - HALF_SQUARE_DIM;
   } else if (col == FOURTH_COL) {
-    x_coord = COL_3 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_3 - HALF_SQUARE_DIM;
   } else if (col == FIFTH_COL) {
-    x_coord = COL_4 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_4 - HALF_SQUARE_DIM;
   } else if (col == SIXTH_COL) {
-    x_coord = COL_5 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_5 - HALF_SQUARE_DIM;
   } else if (col == SEVENTH_COL) {
-    x_coord = COL_6 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_6 - HALF_SQUARE_DIM;
   } else if (col == EIGHTH_COL) {
-    x_coord = COL_7 - SQUARE_DIM + CHAR_DIFF_IN_SIZE_X;
+    center_x = COL_7 - HALF_SQUARE_DIM;
   }
-  display_setCursor(x_coord, y_coord);
-  display_setTextSize(CHAR_SIZE);
-  display_setTextColor(display_color);
-  display_println("B");
+
+  y_coord_rect = center_y - HALF_SQUARE_DIM + DIFF_IN_SIZE;
+  x_coord_rect = center_x - HALF_SQUARE_DIM + 8;
+  x_coord_t1 = center_x + HALF_SQUARE_DIM - DIFF_IN_SIZE;
+  x_coord_t2 = center_x - HALF_SQUARE_DIM + DIFF_IN_SIZE;
+  x_coord_t3 = center_x + HALF_SQUARE_DIM - DIFF_IN_SIZE;
+  y_coord_t1 = center_y - DIFF_IN_SIZE;
+  y_coord_t2 = center_y + HALF_SQUARE_DIM - DIFF_IN_SIZE;
+  y_coord_t3 = center_y + HALF_SQUARE_DIM - DIFF_IN_SIZE;
+  display_fillTriangle(x_coord_t1, y_coord_t1, x_coord_t2, y_coord_t2,
+                       x_coord_t3, y_coord_t3, display_color);
+  display_fillRoundRect(x_coord_rect, y_coord_rect, SQUARE_DIM - 12,
+                        HALF_SQUARE_DIM - DIFF_IN_SIZE, DIFF_IN_SIZE,
+                        display_color);
 }
 
 void displayKing(uint8_t row, uint8_t col, int16_t color, bool erase) {
@@ -531,15 +541,28 @@ void chessDisplay_displayPiece(piece_t class, uint8_t row, uint8_t column,
   }
 }
 
-// show where player can move to depending on piece type
-void chessDisplay_possibleMoves() {
-  // display_drawCircle(DISPLAY_GREEN);
+void chessDisplay_pieceChosen(piece_t class, uint8_t row, uint8_t column) {
+  piece_type_t type = piece_type(class);
+
+  if (type == PIECE_TYPE_PAWN) {
+    displayPawn(row, column, DISPLAY_GREEN, false);
+  } else if (type == PIECE_TYPE_ROOK) {
+    displayRook(row, column, DISPLAY_GREEN, false);
+  } else if (type == PIECE_TYPE_KNIGHT) {
+    displayKnight(row, column, DISPLAY_GREEN, false);
+  } else if (type == PIECE_TYPE_BISHOP) {
+    displayBishop(row, column, DISPLAY_GREEN, false);
+  } else if (type == PIECE_TYPE_QUEEN) {
+    displayQueen(row, column, DISPLAY_GREEN, false);
+  } else if (type == PIECE_TYPE_KING) {
+    displayKing(row, column, DISPLAY_GREEN, false);
+  }
 }
 
 void chessDisplay_runTest() {
   int8_t row, column;
-  display_init();
-  display_fillScreen(DISPLAY_BLACK);
+  // display_init();
+  // display_fillScreen(DISPLAY_BLACK);
   chessDisplay_drawBoard();
   chessDisplay_displayPiece(PIECE_TYPE_QUEEN | PIECE_COLOR_WHITE, FIRST_ROW,
                             FOURTH_COL, true);
@@ -548,5 +571,6 @@ void chessDisplay_runTest() {
   display_clearOldTouchData();
   utils_msDelay(50);
   chessDisplay_touchScreencomputeBoardRowColumn(&row, &column);
+  chessDisplay_pieceChosen(PIECE_TYPE_PAWN, row, column);
   printf("row: %d col: %d\n", row, column);
 }
