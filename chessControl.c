@@ -1,4 +1,5 @@
 #include "chessControl.h"
+#include "async_ai.h"
 #include "board.h"
 #include "buttons.h"
 #include "chessDisplay.h"
@@ -76,6 +77,7 @@ static uint8_t move_row;
 static uint8_t move_col;
 static board_move_list_t moves;
 static bool has_moves;
+static board_move_t current_move;
 
 /* Helper functions */
 
@@ -162,6 +164,29 @@ static void debugStatePrint() {
   }
 }
 
+static void make_move(board_move_t move) {
+  board_move_t move_simplified = board_simplify_move(move);
+
+  // remove piece where move begins
+  chessDisplay_displayPiece(
+      board.pieces[move_simplified.start_row][move_simplified.start_col],
+      move_simplified.start_row, move_simplified.start_col, ERASE);
+
+  // remove piece where move ends
+  chessDisplay_displayPiece(
+      board.pieces[move_simplified.end_row][move_simplified.end_col],
+      move_simplified.end_row, move_simplified.end_col, ERASE);
+
+  // apply move
+  board_apply_move(&board, move);
+
+  // draw piece where move ends
+  chessDisplay_displayPiece(
+      board.pieces[move_simplified.end_row][move_simplified.end_col],
+      move_simplified.end_row, move_simplified.end_col, DRAW);
+  // TODO - DRAW Castling
+}
+
 // Inits the SM
 void chessControl_init() {
   currentState = init_st;
@@ -221,21 +246,24 @@ void chessControl_tick() {
 
   case verify_move_st:
     if (is_valid_move()) {
+      current_move = (board_move_t){piece_row, piece_col, move_row, move_col};
       if (two_player) {
         UPDATE_BOARD(select_piece_st)
         player_color = player_color == PIECE_COLOR_BLACK ? PIECE_COLOR_WHITE
                                                          : PIECE_COLOR_BLACK;
       } else {
         UPDATE_BOARD(ai_turn_st)
+        async_ai_request_move(&board);
       }
     } else
       currentState = select_move_st;
     break;
 
   case ai_turn_st:
-    // if (minimax_done()) {
-    UPDATE_BOARD(select_piece_st)
-    // }
+    if (async_ai_move_ready()) {
+      current_move = async_ai_get_move();
+      UPDATE_BOARD(select_piece_st)
+    }
     break;
 
   case game_over_st:
@@ -291,7 +319,6 @@ void chessControl_tick() {
     break;
 
   case ai_turn_st:
-    // ENABLE MINIMAX
     break;
 
   case game_over_st:
@@ -302,19 +329,7 @@ void chessControl_tick() {
     break;
 
   case update_board_st:
-    // Draw updates
-    chessDisplay_displayPiece(board.pieces[move_row][move_col], move_row,
-                              move_col, ERASE);
-    chessDisplay_displayPiece(board.pieces[piece_row][piece_col], piece_row,
-                              piece_col, ERASE);
-    chessDisplay_displayPiece(board.pieces[piece_row][piece_col], move_row,
-                              move_col, DRAW);
-    // TODO - DRAW Castling
-
-    // Update board var
-    board_apply_move(&board,
-                     (board_move_t){piece_row, piece_col, move_row, move_col});
-
+    make_move(current_move);
     // Moves have updated
     has_moves = false;
     break;
@@ -324,10 +339,3 @@ void chessControl_tick() {
     break;
   }
 }
-
-/* TESTING * /
-
-int main() { printf("ADC: %d\n", ADC_DELAY); }
-
-void isr_function() {}
-/**/

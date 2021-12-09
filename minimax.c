@@ -173,11 +173,6 @@ static void minimax_remove_illegal_moves(const board_t *board,
   }
 }
 
-inline tinybool minimax_is_game_over(const board_t *board) {
-  minimax_state_t state = minimax_get_board_state(board);
-  return state == MINIMAX_CHECKMATE || state == MINIMAX_DRAW;
-}
-
 board_move_list_t minimax_get_legal_moves(const board_t *board) {
   // board_move_list_t moves = board_get_possible_moves(board);
   board_move_list_t move_list;
