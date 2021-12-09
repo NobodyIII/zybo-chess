@@ -35,4 +35,8 @@ void chessDisplay_displayPiece(piece_t class, uint8_t row, uint8_t column, bool 
 //draw checkerboard 
 void chessDisplay_drawBoard();
 
+//highlight piece that player has chosen to move
+void chessDisplay_pieceChosen(piece_t class, uint8_t row, uint8_t column);
+
+//test display
 void chessDisplay_runTest();
