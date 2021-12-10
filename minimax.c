@@ -13,7 +13,7 @@
 #define MAT_VALUE_MULTIPLIER 10
 
 #define SCORE_DEAD_THRESHOLD (1000 * MAT_VALUE_MULTIPLIER)
-#define MINIMAX_DEPTH 6
+#define MINIMAX_DEPTH 7
 
 typedef int32_t minimax_score_t;
 
