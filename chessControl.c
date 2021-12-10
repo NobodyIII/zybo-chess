@@ -291,7 +291,6 @@ void chessControl_tick() {
                                                          : PIECE_COLOR_BLACK;
       } else {
         UPDATE_BOARD(ai_turn_st)
-        async_ai_request_move(&board);
       }
     } else {
       // Check if user deselects piece
@@ -349,6 +348,8 @@ void chessControl_tick() {
           in_check = false;
         }
         currentState = nextState;
+        if (nextState == ai_turn_st)
+          async_ai_request_move(&board);
       }
     }
     break;
